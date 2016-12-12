@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
 
-from celery.backends import BACKEND_ALIASES
+try:
+    from celery.backends import BACKEND_ALIASES
+except ImportError:
+    from celery.app.backends import BACKEND_ALIASES
 from kombu.transport import TRANSPORT_ALIASES
 
 from .backend import RedisSentinelBackend
