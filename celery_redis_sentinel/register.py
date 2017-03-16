@@ -7,7 +7,7 @@ from kombu.transport import TRANSPORT_ALIASES
 from .backend import RedisSentinelBackend
 from .transport import SentinelTransport
 
-if celery.VERSION.major < 4:
+if celery.VERSION[0] < 4:
     from celery.backends import BACKEND_ALIASES
 else:
     from celery.app.backends import BACKEND_ALIASES

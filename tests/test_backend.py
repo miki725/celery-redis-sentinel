@@ -33,6 +33,7 @@ class TestRedisSentinelBackend(object):
                        ('192.168.1.3', 26379)],
             service_name='master',
             socket_timeout=1,
+            socket_connect_timeout=mock.ANY,
             host=mock.ANY,
             max_connections=mock.ANY,
             password=mock.ANY,

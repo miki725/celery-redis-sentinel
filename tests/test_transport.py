@@ -41,6 +41,7 @@ class TestSentinelChannel(object):
             password=mock.ANY,
             port=mock.ANY,
             connection_pool_class=CelerySentinelConnectionPool,
+            connection_class=mock.ANY,
             redis_class=channel.Client,
             db=0,
             sentinels=[('192.168.1.1', 26379),
