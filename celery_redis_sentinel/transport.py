@@ -46,6 +46,7 @@ class SentinelChannel(Channel):
         CelerySentinelConnectionPool
             Connection pool instance connected to redis sentinel
         """
+
         params = self._connparams()
         params.update({
             'sentinels': self.sentinels,
