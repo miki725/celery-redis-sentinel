@@ -3,9 +3,17 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from celery.backends.redis import RedisBackend
 from kombu.utils import cached_property
-from redis import Redis
+import celery
 
 from .redis_sentinel import EnsuredRedisMixin, get_redis_via_sentinel
+
+try:
+    if celery.VERSION.major >= 4:
+        from redis import StrictRedis as Redis
+    else:
+        from redis import Redis
+except AttributeError:
+    from redis import Redis
 
 
 class RedisSentinelBackend(RedisBackend):

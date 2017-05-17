@@ -2,10 +2,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import mock
-from celery.backends import BACKEND_ALIASES
+import celery
 from kombu.transport import TRANSPORT_ALIASES
 
 from celery_redis_sentinel.register import get_class_path, register
+
+try:
+    if celery.VERSION.major >= 4:
+        from celery.app.backends import BACKEND_ALIASES
+    else:
+        from celery.backends import BACKEND_ALIASES
+except AttributeError:
+    from celery.backends import BACKEND_ALIASES
 
 
 class Foo(object):

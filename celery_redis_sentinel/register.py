@@ -7,10 +7,13 @@ from kombu.transport import TRANSPORT_ALIASES
 from .backend import RedisSentinelBackend
 from .transport import SentinelTransport
 
-if celery.VERSION.major < 4:
+try:
+    if celery.VERSION.major >= 4:
+        from celery.app.backends import BACKEND_ALIASES
+    else:
+        from celery.backends import BACKEND_ALIASES
+except AttributeError:
     from celery.backends import BACKEND_ALIASES
-else:
-    from celery.app.backends import BACKEND_ALIASES
 
 
 def get_class_path(cls):
