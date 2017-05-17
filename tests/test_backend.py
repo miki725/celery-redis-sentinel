@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import mock
+import celery
 
 from celery_redis_sentinel.backend import RedisSentinelBackend
 
@@ -25,16 +26,25 @@ class TestRedisSentinelBackend(object):
         client = backend.client
 
         assert client == mock_get_redis_via_sentinel.return_value
+
+        ignored_args = [
+            'redis_class',
+            'host',
+            'max_connections',
+            'password',
+            'port',
+        ]
+        try:
+            if celery.VERSION.major >= 4:
+                ignored_args.append('socket_connect_timeout')
+        except AttributeError:
+            pass
         mock_get_redis_via_sentinel.assert_called_once_with(
             db=0,
-            redis_class=mock.ANY,
             sentinels=[('192.168.1.1', 26379),
                        ('192.168.1.2', 26379),
                        ('192.168.1.3', 26379)],
             service_name='master',
             socket_timeout=1,
-            host=mock.ANY,
-            max_connections=mock.ANY,
-            password=mock.ANY,
-            port=mock.ANY,
+            **{arg: mock.ANY for arg in ignored_args}
         )

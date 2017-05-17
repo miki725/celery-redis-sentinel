@@ -7,10 +7,13 @@ from kombu.transport import TRANSPORT_ALIASES
 
 from celery_redis_sentinel.register import get_class_path, register
 
-if celery.VERSION.major < 4:
+try:
+    if celery.VERSION.major >= 4:
+        from celery.app.backends import BACKEND_ALIASES
+    else:
+        from celery.backends import BACKEND_ALIASES
+except AttributeError:
     from celery.backends import BACKEND_ALIASES
-else:
-    from celery.app.backends import BACKEND_ALIASES
 
 
 class Foo(object):

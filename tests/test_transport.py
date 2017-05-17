@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import mock
 from kombu import Connection
+import celery
 from redis import StrictRedis
 
 from celery_redis_sentinel.redis_sentinel import CelerySentinelConnectionPool
@@ -35,11 +36,21 @@ class TestSentinelChannel(object):
         pool = channel.sentinel_pool
 
         assert pool == mock_get_redis_via_sentinel.return_value.connection_pool
+        ignored_args = [
+            'host',
+            'max_connections',
+            'password',
+            'port',
+            'socket_connect_timeout',
+            'socket_keepalive',
+            'socket_keepalive_options',
+        ]
+        try:
+            if celery.VERSION.major >= 4:
+                ignored_args.append('connection_class')
+        except AttributeError:
+            pass
         mock_get_redis_via_sentinel.assert_called_once_with(
-            host=mock.ANY,
-            max_connections=mock.ANY,
-            password=mock.ANY,
-            port=mock.ANY,
             connection_pool_class=CelerySentinelConnectionPool,
             redis_class=channel.Client,
             db=0,
@@ -48,9 +59,7 @@ class TestSentinelChannel(object):
                        ('192.168.1.3', 26379)],
             service_name='master',
             socket_timeout=1,
-            socket_connect_timeout=mock.ANY,
-            socket_keepalive=mock.ANY,
-            socket_keepalive_options=mock.ANY,
+            **{arg: mock.ANY for arg in ignored_args}
         )
 
 
